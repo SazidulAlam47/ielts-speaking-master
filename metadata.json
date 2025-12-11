@@ -1,0 +1,7 @@
+{
+  "name": "IELTS Speaking Master",
+  "description": "A comprehensive IELTS Speaking test simulator featuring real sample tasks (Part 1, 2, 3), text-to-speech questioning, audio recording, and AI-powered evaluation based on official band descriptors.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
