@@ -34,16 +34,16 @@ const TestResult: React.FC<TestResultProps> = ({ result, onRestart, isFullTest =
   const hasPartBreakdown = result.partBreakdown && result.partBreakdown.length > 0;
   
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-white shadow-xl rounded-2xl my-8">
-      <div className="text-center mb-8">
-        <h2 className="text-3xl font-bold text-gray-900 mb-2">Test Complete</h2>
-        <div className="inline-block p-6 rounded-full bg-red-50 border-4 border-red-100">
-          <p className="text-sm uppercase tracking-wide text-gray-500 font-semibold mb-1">Overall Band Score</p>
-          <p className="text-6xl font-extrabold text-red-600">{result.overallBand || 0}</p>
+    <div className="max-w-4xl mx-auto p-4 md:p-6 bg-white shadow-xl rounded-2xl my-4 md:my-8">
+      <div className="text-center mb-6 md:mb-8">
+        <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">Test Complete</h2>
+        <div className="inline-block p-4 md:p-6 rounded-full bg-red-50 border-4 border-red-100">
+          <p className="text-xs md:text-sm uppercase tracking-wide text-gray-500 font-semibold mb-1">Overall Band Score</p>
+          <p className="text-5xl md:text-6xl font-extrabold text-red-600">{result.overallBand || 0}</p>
         </div>
       </div>
 
-      <div className="grid md:grid-cols-2 gap-8 mb-8">
+      <div className="grid md:grid-cols-2 gap-6 md:gap-8 mb-6 md:mb-8">
         {/* Chart */}
         <div className="h-64 w-full min-w-0">
            <ResponsiveContainer width="100%" height="100%">
@@ -61,19 +61,19 @@ const TestResult: React.FC<TestResultProps> = ({ result, onRestart, isFullTest =
         </div>
 
         {/* General Feedback */}
-        <div className="bg-gray-50 p-6 rounded-xl border border-gray-100 flex flex-col justify-center">
+        <div className="bg-gray-50 p-4 md:p-6 rounded-xl border border-gray-100 flex flex-col justify-center">
             <h3 className="text-lg font-semibold text-gray-800 mb-2 flex items-center gap-2">
                 <CheckCircleIcon className="h-5 w-5 text-green-500" />
                 General Feedback
             </h3>
-            <p className="text-gray-700 leading-relaxed italic">"{result.generalFeedback || "No general feedback provided."}"</p>
+            <p className="text-sm md:text-base text-gray-700 leading-relaxed italic">"{result.generalFeedback || "No general feedback provided."}"</p>
         </div>
       </div>
 
       {/* Breakdown Section (Only if partBreakdown exists AND isFullTest) */}
       {hasPartBreakdown && isFullTest && (
-        <div className="mb-8">
-          <h3 className="text-2xl font-bold text-gray-800 mb-4 border-b pb-2">Full Test Breakdown</h3>
+        <div className="mb-6 md:mb-8">
+          <h3 className="text-xl md:text-2xl font-bold text-gray-800 mb-4 border-b pb-2">Full Test Breakdown</h3>
           
           <div className="overflow-x-auto shadow-sm border border-gray-200 rounded-lg">
              <table className="min-w-full divide-y divide-gray-200">
@@ -89,7 +89,7 @@ const TestResult: React.FC<TestResultProps> = ({ result, onRestart, isFullTest =
                    <tr key={idx}>
                      <td className="px-4 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{part.part}</td>
                      <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900 font-bold">{part.band}</td>
-                     <td className="px-4 py-4 text-sm text-gray-500">{part.feedback}</td>
+                     <td className="px-4 py-4 text-sm text-gray-500 min-w-[200px]">{part.feedback}</td>
                    </tr>
                  ))}
                </tbody>
@@ -125,10 +125,10 @@ const TestResult: React.FC<TestResultProps> = ({ result, onRestart, isFullTest =
         />
       </div>
 
-      <div className="mt-10 text-center">
+      <div className="mt-8 md:mt-10 text-center">
         <button 
           onClick={onRestart}
-          className="px-8 py-3 bg-gray-900 text-white font-semibold rounded-lg hover:bg-gray-800 transition shadow-lg"
+          className="px-6 md:px-8 py-3 bg-gray-900 text-white font-semibold rounded-lg hover:bg-gray-800 transition shadow-lg text-sm md:text-base"
         >
           Take Another Test
         </button>
@@ -140,8 +140,8 @@ const TestResult: React.FC<TestResultProps> = ({ result, onRestart, isFullTest =
 const ScoreCard: React.FC<{title: string, score: number, feedback: string, colorClass: string}> = ({ title, score, feedback, colorClass }) => (
   <div className={`p-4 rounded-xl border-l-4 bg-white shadow-sm ${colorClass.split(' ')[2]}`}>
     <div className="flex justify-between items-center mb-2">
-      <h4 className="font-bold text-gray-800 text-lg">{title}</h4>
-      <span className={`px-3 py-1 rounded-full text-sm font-bold ${colorClass}`}>Band {score}</span>
+      <h4 className="font-bold text-gray-800 text-base md:text-lg">{title}</h4>
+      <span className={`px-3 py-1 rounded-full text-xs md:text-sm font-bold ${colorClass}`}>Band {score}</span>
     </div>
     <p className="text-gray-600 text-sm">{feedback}</p>
   </div>
