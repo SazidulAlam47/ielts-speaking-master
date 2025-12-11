@@ -89,8 +89,8 @@ function App() {
             if (immediate) {
                 executeSpeech();
             } else {
-                // 5-second delay before speaking to allow for connection issues and ensure start is not clipped
-                audioTimeoutRef.current = setTimeout(executeSpeech, 5000);
+                // 3.5-second delay before speaking to allow for connection issues and ensure start is not clipped
+                audioTimeoutRef.current = setTimeout(executeSpeech, 3500);
             }
         },
         []
