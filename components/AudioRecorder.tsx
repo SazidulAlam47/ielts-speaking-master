@@ -5,9 +5,10 @@ interface AudioRecorderProps {
   onRecordingComplete: (blob: Blob) => void;
   isAutoStart?: boolean;
   showTimer?: boolean;
+  stopSignal?: boolean;
 }
 
-const AudioRecorder: React.FC<AudioRecorderProps> = ({ onRecordingComplete, isAutoStart = false, showTimer = true }) => {
+const AudioRecorder: React.FC<AudioRecorderProps> = ({ onRecordingComplete, isAutoStart = false, showTimer = true, stopSignal = false }) => {
   const [isRecording, setIsRecording] = useState(false);
   const [elapsedTime, setElapsedTime] = useState(0);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
@@ -67,6 +68,13 @@ const AudioRecorder: React.FC<AudioRecorderProps> = ({ onRecordingComplete, isAu
         if(timerRef.current) clearInterval(timerRef.current);
     }
   }, [isAutoStart, startRecording]);
+
+  // Watch for stop signal
+  useEffect(() => {
+    if (stopSignal && isRecording) {
+        stopRecording();
+    }
+  }, [stopSignal, isRecording, stopRecording]);
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);

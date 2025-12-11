@@ -31,6 +31,9 @@ function App() {
     const [evaluation, setEvaluation] = useState<EvaluationResult | null>(null);
     const [timer, setTimer] = useState(0); // Used for prep time in Part 2 and answering time
     const [isPreparingAudio, setIsPreparingAudio] = useState(false);
+    
+    // Flag to force stop recording in Part 2
+    const [forceStopPart2, setForceStopPart2] = useState(false);
 
     // Track phase in ref to handle async speech cancellation reliably
     const phaseRef = useRef(phase);
@@ -201,9 +204,15 @@ function App() {
             }, 1000);
         } else if (phase === TestPhase.PART_2_ANSWER) {
             setTimer(120); // 2 minutes max for Long Turn
+            setForceStopPart2(false); // Reset stop signal
+
             interval = window.setInterval(() => {
                 setTimer((prev) => {
-                    if (prev <= 0) return 0;
+                    if (prev <= 1) {
+                        // Timer reaching 0, force stop recording
+                        if (prev === 1) setForceStopPart2(true);
+                        return 0;
+                    }
                     return prev - 1;
                 });
             }, 1000);
@@ -454,7 +463,7 @@ function App() {
                     {phase === TestPhase.PART_2_ANSWER && testContent.part2 && (
                         <div className="w-full text-left">
                             <div className="flex justify-between items-center mb-4">
-                                <h3 className="text-lg md:text-xl font-semibold text-red-600 uppercase tracking-widest text-center flex-1">
+                                <h3 className="text-lg md:text-xl font-semibold text-red-600 uppercase tracking-widest">
                                     Part 2: Long Turn
                                 </h3>
                                 <div className="flex items-center gap-2 text-red-600 font-mono text-lg md:text-xl font-bold border border-red-200 px-3 py-1 rounded bg-red-50">
@@ -478,6 +487,7 @@ function App() {
                                 <AudioRecorder
                                     onRecordingComplete={handlePart2Complete}
                                     showTimer={false}
+                                    stopSignal={forceStopPart2}
                                 />
                             </div>
                             <p className="text-center text-xs text-gray-400 mt-4">

@@ -54,7 +54,12 @@ const TestResult: React.FC<TestResultProps> = ({ result, onRestart, isFullTest =
                 background
                 dataKey="score"
               />
-              <Legend iconSize={10} layout="vertical" verticalAlign="middle" wrapperStyle={{top: 0, left: 0}} />
+              <Legend 
+                iconSize={10} 
+                layout="horizontal" 
+                verticalAlign="bottom" 
+                align="center"
+              />
               <Tooltip />
             </RadialBarChart>
           </ResponsiveContainer>
@@ -139,9 +144,11 @@ const TestResult: React.FC<TestResultProps> = ({ result, onRestart, isFullTest =
 
 const ScoreCard: React.FC<{title: string, score: number, feedback: string, colorClass: string}> = ({ title, score, feedback, colorClass }) => (
   <div className={`p-4 rounded-xl border-l-4 bg-white shadow-sm ${colorClass.split(' ')[2]}`}>
-    <div className="flex justify-between items-center mb-2">
+    <div className="flex justify-between items-center mb-2 gap-2">
       <h4 className="font-bold text-gray-800 text-base md:text-lg">{title}</h4>
-      <span className={`px-3 py-1 rounded-full text-xs md:text-sm font-bold ${colorClass}`}>Band {score}</span>
+      <span className={`px-3 py-1 rounded-full text-xs md:text-sm font-bold whitespace-nowrap flex-shrink-0 ${colorClass}`}>
+        Band {score}
+      </span>
     </div>
     <p className="text-gray-600 text-sm">{feedback}</p>
   </div>
