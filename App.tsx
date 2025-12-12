@@ -31,7 +31,7 @@ function App() {
     const [evaluation, setEvaluation] = useState<EvaluationResult | null>(null);
     const [timer, setTimer] = useState(0); // Used for prep time in Part 2 and answering time
     const [isPreparingAudio, setIsPreparingAudio] = useState(false);
-    
+
     // Flag to force stop recording in Part 2
     const [forceStopPart2, setForceStopPart2] = useState(false);
 
@@ -338,6 +338,17 @@ function App() {
                         >
                             Start Full Test (Part 1 - 3)
                         </button>
+                    </div>
+                    <div className="text-sm text-gray-400 mt-5">
+                        This project is open source. Check it out on{" "}
+                        <a
+                            href="https://github.com/SazidulAlam47/ielts-speaking-master"
+                            target="_blank"
+                            className="font-semibold text-red-500 hover:text-red-600 hover:underline"
+                        >
+                            GitHub
+                        </a>
+                        .
                     </div>
                 </div>
             </div>
