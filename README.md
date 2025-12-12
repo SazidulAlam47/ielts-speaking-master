@@ -25,7 +25,7 @@ A React-based application designed to help users practice and improve their IELT
 1. **Clone the repository**:
 
     ```bash
-    git clone <repository-url>
+    git clone https://github.com/SazidulAlam47/ielts-speaking-master
     cd ielts-speaking-master
     ```
 
