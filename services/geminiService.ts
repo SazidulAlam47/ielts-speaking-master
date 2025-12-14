@@ -1,4 +1,4 @@
-import { GoogleGenAI, Type } from "@google/genai";
+import { GoogleGenAI, Type } from '@google/genai';
 import { RUBRIC_SYSTEM_PROMPT } from '../constants';
 import { EvaluationResult, AudioRecording } from '../types';
 
@@ -17,39 +17,41 @@ const blobToBase64 = (blob: Blob): Promise<string> => {
   });
 };
 
-export const evaluateTest = async (recordings: AudioRecording[]): Promise<EvaluationResult> => {
+export const evaluateTest = async (
+  recordings: AudioRecording[]
+): Promise<EvaluationResult> => {
   try {
     const parts = [];
 
     // Context setting
     parts.push({
-      text: "Evaluate the following IELTS Speaking test session. The audio parts are provided in sequence with their context."
+      text: 'Evaluate the following IELTS Speaking test session. The audio parts are provided in sequence with their context.',
     });
 
     // Process all audio recordings
     for (const recording of recordings) {
       const base64Audio = await blobToBase64(recording.blob);
-      
+
       parts.push({
-        text: `[Context: ${recording.part} - ${recording.questionContext}]`
+        text: `[Context: ${recording.part} - ${recording.questionContext}]`,
       });
-      
+
       parts.push({
         inlineData: {
           mimeType: recording.blob.type || 'audio/webm',
-          data: base64Audio
-        }
+          data: base64Audio,
+        },
       });
     }
 
     const response = await ai.models.generateContent({
       model: 'gemini-2.5-flash',
       contents: {
-        parts: parts
+        parts: parts,
       },
       config: {
         systemInstruction: RUBRIC_SYSTEM_PROMPT,
-        responseMimeType: "application/json",
+        responseMimeType: 'application/json',
         responseSchema: {
           type: Type.OBJECT,
           properties: {
@@ -58,33 +60,33 @@ export const evaluateTest = async (recordings: AudioRecording[]): Promise<Evalua
               type: Type.OBJECT,
               properties: {
                 score: { type: Type.NUMBER },
-                feedback: { type: Type.STRING }
+                feedback: { type: Type.STRING },
               },
-              required: ["score", "feedback"]
+              required: ['score', 'feedback'],
             },
             lexicalResource: {
               type: Type.OBJECT,
               properties: {
                 score: { type: Type.NUMBER },
-                feedback: { type: Type.STRING }
+                feedback: { type: Type.STRING },
               },
-              required: ["score", "feedback"]
+              required: ['score', 'feedback'],
             },
             grammaticalRange: {
               type: Type.OBJECT,
               properties: {
                 score: { type: Type.NUMBER },
-                feedback: { type: Type.STRING }
+                feedback: { type: Type.STRING },
               },
-              required: ["score", "feedback"]
+              required: ['score', 'feedback'],
             },
             pronunciation: {
               type: Type.OBJECT,
               properties: {
                 score: { type: Type.NUMBER },
-                feedback: { type: Type.STRING }
+                feedback: { type: Type.STRING },
               },
-              required: ["score", "feedback"]
+              required: ['score', 'feedback'],
             },
             generalFeedback: { type: Type.STRING },
             partBreakdown: {
@@ -96,33 +98,53 @@ export const evaluateTest = async (recordings: AudioRecording[]): Promise<Evalua
                   scores: {
                     type: Type.OBJECT,
                     properties: {
-                      fluencyCoherence: { type: Type.NUMBER },
-                      lexicalResource: { type: Type.NUMBER },
-                      grammaticalRange: { type: Type.NUMBER },
-                      pronunciation: { type: Type.NUMBER }
+                      fluencyCoherence: {
+                        type: Type.NUMBER,
+                      },
+                      lexicalResource: {
+                        type: Type.NUMBER,
+                      },
+                      grammaticalRange: {
+                        type: Type.NUMBER,
+                      },
+                      pronunciation: {
+                        type: Type.NUMBER,
+                      },
                     },
-                    required: ["fluencyCoherence", "lexicalResource", "grammaticalRange", "pronunciation"]
+                    required: [
+                      'fluencyCoherence',
+                      'lexicalResource',
+                      'grammaticalRange',
+                      'pronunciation',
+                    ],
                   },
                   band: { type: Type.NUMBER },
-                  feedback: { type: Type.STRING }
+                  feedback: { type: Type.STRING },
                 },
-                required: ["part", "scores", "band", "feedback"]
-              }
-            }
+                required: ['part', 'scores', 'band', 'feedback'],
+              },
+            },
           },
-          required: ["overallBand", "fluencyCoherence", "lexicalResource", "grammaticalRange", "pronunciation", "generalFeedback", "partBreakdown"]
-        }
-      }
+          required: [
+            'overallBand',
+            'fluencyCoherence',
+            'lexicalResource',
+            'grammaticalRange',
+            'pronunciation',
+            'generalFeedback',
+            'partBreakdown',
+          ],
+        },
+      },
     });
 
     if (response.text) {
       return JSON.parse(response.text) as EvaluationResult;
     } else {
-      throw new Error("No response text from Gemini");
+      throw new Error('No response text from Gemini');
     }
-
   } catch (error) {
-    console.error("Evaluation Error:", error);
+    console.error('Evaluation Error:', error);
     throw error;
   }
 };

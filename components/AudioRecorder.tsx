@@ -8,7 +8,12 @@ interface AudioRecorderProps {
   stopSignal?: boolean;
 }
 
-const AudioRecorder: React.FC<AudioRecorderProps> = ({ onRecordingComplete, isAutoStart = false, showTimer = true, stopSignal = false }) => {
+const AudioRecorder: React.FC<AudioRecorderProps> = ({
+  onRecordingComplete,
+  isAutoStart = false,
+  showTimer = true,
+  stopSignal = false,
+}) => {
   const [isRecording, setIsRecording] = useState(false);
   const [elapsedTime, setElapsedTime] = useState(0);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
@@ -17,9 +22,13 @@ const AudioRecorder: React.FC<AudioRecorderProps> = ({ onRecordingComplete, isAu
 
   const startRecording = useCallback(async () => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const stream = await navigator.mediaDevices.getUserMedia({
+        audio: true,
+      });
       const mediaRecorder = new MediaRecorder(stream, {
-          mimeType: MediaRecorder.isTypeSupported('audio/webm') ? 'audio/webm' : 'audio/mp4'
+        mimeType: MediaRecorder.isTypeSupported('audio/webm')
+          ? 'audio/webm'
+          : 'audio/mp4',
       });
 
       mediaRecorderRef.current = mediaRecorder;
@@ -32,21 +41,22 @@ const AudioRecorder: React.FC<AudioRecorderProps> = ({ onRecordingComplete, isAu
       };
 
       mediaRecorder.onstop = () => {
-        const blob = new Blob(chunksRef.current, { type: 'audio/webm' });
+        const blob = new Blob(chunksRef.current, {
+          type: 'audio/webm',
+        });
         onRecordingComplete(blob);
-        stream.getTracks().forEach(track => track.stop());
+        stream.getTracks().forEach((track) => track.stop());
       };
 
       mediaRecorder.start();
       setIsRecording(true);
-      
-      timerRef.current = window.setInterval(() => {
-        setElapsedTime(prev => prev + 1);
-      }, 1000);
 
+      timerRef.current = window.setInterval(() => {
+        setElapsedTime((prev) => prev + 1);
+      }, 1000);
     } catch (err) {
-      console.error("Error accessing microphone:", err);
-      alert("Could not access microphone. Please allow permissions.");
+      console.error('Error accessing microphone:', err);
+      alert('Could not access microphone. Please allow permissions.');
     }
   }, [onRecordingComplete]);
 
@@ -65,14 +75,14 @@ const AudioRecorder: React.FC<AudioRecorderProps> = ({ onRecordingComplete, isAu
       startRecording();
     }
     return () => {
-        if(timerRef.current) clearInterval(timerRef.current);
-    }
+      if (timerRef.current) clearInterval(timerRef.current);
+    };
   }, [isAutoStart, startRecording]);
 
   // Watch for stop signal
   useEffect(() => {
     if (stopSignal && isRecording) {
-        stopRecording();
+      stopRecording();
     }
   }, [stopSignal, isRecording, stopRecording]);
 
@@ -84,7 +94,11 @@ const AudioRecorder: React.FC<AudioRecorderProps> = ({ onRecordingComplete, isAu
 
   return (
     <div className="flex flex-col items-center justify-center space-y-4">
-      <div className={`w-24 h-24 rounded-full flex items-center justify-center transition-all duration-300 ${isRecording ? 'bg-red-100 animate-pulse' : 'bg-gray-100'}`}>
+      <div
+        className={`w-24 h-24 rounded-full flex items-center justify-center transition-all duration-300 ${
+          isRecording ? 'bg-red-100 animate-pulse' : 'bg-gray-100'
+        }`}
+      >
         {isRecording ? (
           <MicrophoneIcon className="h-10 w-10 text-red-600" />
         ) : (
