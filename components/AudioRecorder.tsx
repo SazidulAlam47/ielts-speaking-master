@@ -6,6 +6,7 @@ interface AudioRecorderProps {
   isAutoStart?: boolean;
   showTimer?: boolean;
   stopSignal?: boolean;
+  disabled?: boolean;
 }
 
 const AudioRecorder: React.FC<AudioRecorderProps> = ({
@@ -13,6 +14,7 @@ const AudioRecorder: React.FC<AudioRecorderProps> = ({
   isAutoStart = false,
   showTimer = true,
   stopSignal = false,
+  disabled = false,
 }) => {
   const [isRecording, setIsRecording] = useState(false);
   const [elapsedTime, setElapsedTime] = useState(0);
@@ -20,6 +22,14 @@ const AudioRecorder: React.FC<AudioRecorderProps> = ({
   const streamRef = useRef<MediaStream | null>(null);
   const chunksRef = useRef<Blob[]>([]);
   const timerRef = useRef<number | null>(null);
+
+  // Use a ref for the callback to ensure the latest version is always called
+  // without triggering effect cleanups that would stop the recording.
+  const onRecordingCompleteRef = useRef(onRecordingComplete);
+
+  useEffect(() => {
+    onRecordingCompleteRef.current = onRecordingComplete;
+  }, [onRecordingComplete]);
 
   const cleanupMedia = useCallback(() => {
     if (streamRef.current) {
@@ -50,7 +60,8 @@ const AudioRecorder: React.FC<AudioRecorderProps> = ({
 
       mediaRecorder.onstop = () => {
         const blob = new Blob(chunksRef.current, { type: 'audio/webm' });
-        onRecordingComplete(blob);
+        // Call the ref instead of the prop directly
+        onRecordingCompleteRef.current(blob);
         cleanupMedia();
       };
 
@@ -64,7 +75,7 @@ const AudioRecorder: React.FC<AudioRecorderProps> = ({
       console.error('Error accessing microphone:', err);
       alert('Could not access microphone. Please allow permissions.');
     }
-  }, [onRecordingComplete, cleanupMedia]);
+  }, [cleanupMedia]); // Removed onRecordingComplete from dependencies
 
   const stopRecording = useCallback(() => {
     if (mediaRecorderRef.current && isRecording) {
@@ -77,11 +88,15 @@ const AudioRecorder: React.FC<AudioRecorderProps> = ({
     }
   }, [isRecording]);
 
+  // Effect for Auto-start
   useEffect(() => {
-    if (isAutoStart) {
+    if (isAutoStart && !disabled && !isRecording) {
       startRecording();
     }
-    // Cleanup on unmount or when dependencies change
+  }, [isAutoStart, disabled, isRecording, startRecording]);
+
+  // Effect for Cleanup (Unmount)
+  useEffect(() => {
     return () => {
       if (timerRef.current) {
         clearInterval(timerRef.current);
@@ -94,7 +109,7 @@ const AudioRecorder: React.FC<AudioRecorderProps> = ({
       }
       cleanupMedia();
     };
-  }, [isAutoStart, startRecording, cleanupMedia]);
+  }, [cleanupMedia]);
 
   // Watch for stop signal
   useEffect(() => {
@@ -113,13 +128,21 @@ const AudioRecorder: React.FC<AudioRecorderProps> = ({
     <div className="flex flex-col items-center justify-center space-y-4">
       <div
         className={`w-24 h-24 rounded-full flex items-center justify-center transition-all duration-300 ${
-          isRecording ? 'bg-red-100 animate-pulse' : 'bg-gray-100'
+          isRecording
+            ? 'bg-red-100 animate-pulse'
+            : disabled
+            ? 'bg-gray-200'
+            : 'bg-gray-100'
         }`}
       >
         {isRecording ? (
           <MicrophoneIcon className="h-10 w-10 text-red-600" />
         ) : (
-          <MicrophoneIcon className="h-10 w-10 text-gray-400" />
+          <MicrophoneIcon
+            className={`h-10 w-10 ${
+              disabled ? 'text-gray-400' : 'text-gray-500'
+            }`}
+          />
         )}
       </div>
 
@@ -132,10 +155,15 @@ const AudioRecorder: React.FC<AudioRecorderProps> = ({
       {!isRecording ? (
         <button
           onClick={startRecording}
-          className="px-6 py-2 bg-red-600 text-white rounded-full font-medium hover:bg-red-700 transition-colors flex items-center gap-2"
+          disabled={disabled}
+          className={`px-6 py-2 rounded-full font-medium transition-colors flex items-center gap-2 ${
+            disabled
+              ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+              : 'bg-red-600 text-white hover:bg-red-700'
+          }`}
         >
           <MicrophoneIcon className="h-5 w-5" />
-          Start Recording
+          {disabled ? 'Examiner is speaking...' : 'Start Recording'}
         </button>
       ) : (
         <button

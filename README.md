@@ -4,51 +4,51 @@ A React-based application designed to help users practice and improve their IELT
 
 ## Features
 
--   **Full Test Simulation**: Practice all three parts of the IELTS Speaking test.
--   **Individual Part Practice**: Focus on Part 1, Part 2, or Part 3 separately.
--   **Audio Recording**: Record your spoken responses directly in the app.
--   **AI Evaluation**: Receive detailed feedback and scores powered by Google Gemini AI.
--   **Timers**: Built-in preparation and speaking time limits to mimic real test conditions.
--   **Results Dashboard**: View your performance with charts and detailed analysis.
+- **Full Test Simulation**: Practice all three parts of the IELTS Speaking test.
+- **Individual Part Practice**: Focus on Part 1, Part 2, or Part 3 separately.
+- **Audio Recording**: Record your spoken responses directly in the app.
+- **AI Evaluation**: Receive detailed feedback and scores powered by Google Gemini AI.
+- **Timers**: Built-in preparation and speaking time limits to mimic real test conditions.
+- **Results Dashboard**: View your performance with charts and detailed analysis.
 
 ## Technologies Used
 
--   **React 19**: For building the user interface.
--   **Vite**: Fast build tool and development server.
--   **TypeScript**: For type-safe JavaScript development.
--   **Google Generative AI (@google/genai)**: For AI-powered evaluation of responses.
--   **Recharts**: For data visualization in results.
--   **Heroicons**: For icons and UI elements.
+- **React 19**: For building the user interface.
+- **Vite**: Fast build tool and development server.
+- **TypeScript**: For type-safe JavaScript development.
+- **Google Generative AI (@google/genai)**: For AI-powered evaluation of responses.
+- **Recharts**: For data visualization in results.
+- **Heroicons**: For icons and UI elements.
 
 ## Installation
 
 1. **Clone the repository**:
 
-    ```bash
-    git clone https://github.com/SazidulAlam47/ielts-speaking-master
-    cd ielts-speaking-master
-    ```
+   ```bash
+   git clone https://github.com/SazidulAlam47/ielts-speaking-master
+   cd ielts-speaking-master
+   ```
 
 2. **Install dependencies**:
 
-    ```bash
-    pnpm install
-    ```
+   ```bash
+   pnpm install
+   ```
 
 3. **Set up environment variables**:
    Create a `.env` file in the root directory and add your Google Gemini API key:
 
-    ```
-    VITE_GEMINI_API_KEY=your_api_key_here
-    ```
+   ```
+   VITE_GEMINI_API_KEY=your_api_key_here
+   ```
 
-    You can obtain an API key from the [Google AI Studio](https://makersuite.google.com/app/apikey).
+   You can obtain an API key from the [Google AI Studio](https://makersuite.google.com/app/apikey).
 
 4. **Run the development server**:
-    ```bash
-    pnpm dev
-    ```
-    Open your browser and navigate to `http://localhost:5173` (or the port shown in the terminal).
+   ```bash
+   pnpm dev
+   ```
+   Open your browser and navigate to `http://localhost:5173` (or the port shown in the terminal).
 
 ## Usage
 
@@ -74,11 +74,11 @@ pnpm preview
 
 ## Project Structure
 
--   `src/App.tsx`: Main application component.
--   `src/components/`: Reusable UI components (AudioRecorder, TestResult).
--   `src/services/`: API services (geminiService for AI evaluation).
--   `src/constants.ts`: Test content and constants.
--   `src/types.ts`: TypeScript type definitions.
+- `src/App.tsx`: Main application component.
+- `src/components/`: Reusable UI components (AudioRecorder, TestResult).
+- `src/services/`: API services (geminiService for AI evaluation).
+- `src/constants.ts`: Test content and constants.
+- `src/types.ts`: TypeScript type definitions.
 
 ## Contributing
 

@@ -29,7 +29,7 @@ function App() {
   const [recordings, setRecordings] = useState<AudioRecording[]>([]);
   const [evaluation, setEvaluation] = useState<EvaluationResult | null>(null);
   const [timer, setTimer] = useState(0); // Used for prep time in Part 2 and answering time
-  const [isPreparingAudio, setIsPreparingAudio] = useState(false);
+  const [isExaminerSpeaking, setIsExaminerSpeaking] = useState(false);
 
   // Flag to force stop recording in Part 2
   const [forceStopPart2, setForceStopPart2] = useState(false);
@@ -62,10 +62,13 @@ function App() {
       // Cancel any current speaking
       window.speechSynthesis.cancel();
 
+      // Set state to disable UI while speaking
+      setIsExaminerSpeaking(true);
+
       const executeSpeech = () => {
         // Double check phase before speaking
         if (phaseRef.current === TestPhase.WELCOME) {
-          setIsPreparingAudio(false);
+          setIsExaminerSpeaking(false);
           return;
         }
 
@@ -74,24 +77,23 @@ function App() {
         utterance.rate = 0.9; // Slightly slower for clarity
 
         utterance.onend = () => {
+          setIsExaminerSpeaking(false);
           if (onEnd) onEnd();
         };
 
         utterance.onerror = () => {
           // Handle errors gracefully
-          setIsPreparingAudio(false);
+          setIsExaminerSpeaking(false);
         };
 
         window.speechSynthesis.speak(utterance);
-        setIsPreparingAudio(false);
       };
-
-      setIsPreparingAudio(true);
 
       if (immediate) {
         executeSpeech();
       } else {
         // 3.5-second delay before speaking to allow for connection issues and ensure start is not clipped
+        // During this delay, isExaminerSpeaking is true, so button is disabled
         audioTimeoutRef.current = setTimeout(executeSpeech, 3500);
       }
     },
@@ -103,6 +105,12 @@ function App() {
   useEffect(() => {
     let textToSpeak = '';
 
+    // Reset speaking state when question changes to ensure UI disables immediately
+    // while waiting for speak() timeout to fire
+    if (phase === TestPhase.PART_1 || phase === TestPhase.PART_3) {
+      setIsExaminerSpeaking(true);
+    }
+
     if (phase === TestPhase.PART_1 && testContent.part1) {
       // Safety check for index
       if (currentPart1Index < testContent.part1.questions.length) {
@@ -113,10 +121,13 @@ function App() {
       if (subTopic && currentPart3QuestionIndex < subTopic.questions.length) {
         textToSpeak = subTopic.questions[currentPart3QuestionIndex];
       }
+    } else {
+      // If not in a speaking phase (e.g. Prep), ensure we are enabled
+      setIsExaminerSpeaking(false);
     }
 
     if (textToSpeak) {
-      speak(textToSpeak); // Default behavior: wait 5s
+      speak(textToSpeak);
     }
 
     // Cleanup: Stop speaking if phase/question changes or component unmounts
@@ -126,7 +137,7 @@ function App() {
         audioTimeoutRef.current = null;
       }
       window.speechSynthesis.cancel();
-      setIsPreparingAudio(false);
+      setIsExaminerSpeaking(false);
     };
   }, [
     phase,
@@ -143,7 +154,7 @@ function App() {
       audioTimeoutRef.current = null;
     }
     window.speechSynthesis.cancel();
-    setIsPreparingAudio(false);
+    setIsExaminerSpeaking(false);
     setPhase(TestPhase.WELCOME);
   };
 
@@ -172,26 +183,33 @@ function App() {
     }
   };
 
-  const handlePart1Next = (blob: Blob) => {
-    const question = testContent.part1.questions[currentPart1Index];
-    setRecordings((prev) => [
-      ...prev,
-      { part: 'Part 1', blob, questionContext: question },
-    ]);
+  const finishTest = useCallback(() => {
+    setPhase(TestPhase.EVALUATING);
+  }, []);
 
-    if (currentPart1Index < testContent.part1.questions.length - 1) {
-      const nextIndex = currentPart1Index + 1;
-      setCurrentPart1Index(nextIndex);
-      // speak() handled by useEffect
-    } else {
-      // Part 1 Done
-      if (testMode === TestMode.PART1) {
-        finishTest();
+  const handlePart1Next = useCallback(
+    (blob: Blob) => {
+      const question = testContent.part1.questions[currentPart1Index];
+      setRecordings((prev) => [
+        ...prev,
+        { part: 'Part 1', blob, questionContext: question },
+      ]);
+
+      if (currentPart1Index < testContent.part1.questions.length - 1) {
+        const nextIndex = currentPart1Index + 1;
+        setCurrentPart1Index(nextIndex);
+        // speak() handled by useEffect
       } else {
-        setPhase(TestPhase.PART_2_PREP);
+        // Part 1 Done
+        if (testMode === TestMode.PART1) {
+          finishTest();
+        } else {
+          setPhase(TestPhase.PART_2_PREP);
+        }
       }
-    }
-  };
+    },
+    [testContent, currentPart1Index, testMode, finishTest]
+  );
 
   // Manage Timers for Prep and Long Turn
   useEffect(() => {
@@ -229,58 +247,64 @@ function App() {
     };
   }, [phase]);
 
-  const handlePart2Complete = (blob: Blob) => {
-    setRecordings((prev) => [
-      ...prev,
-      {
-        part: 'Part 2',
-        blob,
-        questionContext: `Topic: ${
-          testContent.part2.topic
-        }. Points: ${testContent.part2.bullets.join(', ')}`,
-      },
-    ]);
+  const handlePart2Complete = useCallback(
+    (blob: Blob) => {
+      setRecordings((prev) => [
+        ...prev,
+        {
+          part: 'Part 2',
+          blob,
+          questionContext: `Topic: ${
+            testContent.part2.topic
+          }. Points: ${testContent.part2.bullets.join(', ')}`,
+        },
+      ]);
 
-    if (testMode === TestMode.PART2) {
-      finishTest();
-    } else {
-      setCurrentPart3PartIndex(0);
-      setCurrentPart3QuestionIndex(0);
-      setPhase(TestPhase.PART_3);
-      // speak() handled by useEffect
-    }
-  };
+      if (testMode === TestMode.PART2) {
+        finishTest();
+      } else {
+        setCurrentPart3PartIndex(0);
+        setCurrentPart3QuestionIndex(0);
+        setPhase(TestPhase.PART_3);
+        // speak() handled by useEffect
+      }
+    },
+    [testContent, testMode, finishTest]
+  );
 
-  const handlePart3Next = (blob: Blob) => {
-    const currentSubTopic = testContent.part3[currentPart3PartIndex];
-    const question = currentSubTopic.questions[currentPart3QuestionIndex];
+  const handlePart3Next = useCallback(
+    (blob: Blob) => {
+      const currentSubTopic = testContent.part3[currentPart3PartIndex];
+      const question = currentSubTopic.questions[currentPart3QuestionIndex];
 
-    setRecordings((prev) => [
-      ...prev,
-      { part: 'Part 3', blob, questionContext: question },
-    ]);
+      setRecordings((prev) => [
+        ...prev,
+        { part: 'Part 3', blob, questionContext: question },
+      ]);
 
-    // Logic to move to next question or next subtopic
-    if (currentPart3QuestionIndex < currentSubTopic.questions.length - 1) {
-      // Next question in same topic
-      const nextQIndex = currentPart3QuestionIndex + 1;
-      setCurrentPart3QuestionIndex(nextQIndex);
-      // speak() handled by useEffect
-    } else if (currentPart3PartIndex < testContent.part3.length - 1) {
-      // Next topic
-      const nextTopicIndex = currentPart3PartIndex + 1;
-      setCurrentPart3PartIndex(nextTopicIndex);
-      setCurrentPart3QuestionIndex(0);
-      // speak() handled by useEffect
-    } else {
-      // Part 3 Done
-      finishTest();
-    }
-  };
-
-  const finishTest = () => {
-    setPhase(TestPhase.EVALUATING);
-  };
+      // Logic to move to next question or next subtopic
+      if (currentPart3QuestionIndex < currentSubTopic.questions.length - 1) {
+        const nextQIndex = currentPart3QuestionIndex + 1;
+        setCurrentPart3QuestionIndex(nextQIndex);
+        // speak() handled by useEffect
+      } else if (currentPart3PartIndex < testContent.part3.length - 1) {
+        const nextTopicIndex = currentPart3PartIndex + 1;
+        setCurrentPart3PartIndex(nextTopicIndex);
+        setCurrentPart3QuestionIndex(0);
+        // speak() handled by useEffect
+      } else {
+        // Part 3 Done
+        finishTest();
+      }
+    },
+    [
+      testContent,
+      currentPart3PartIndex,
+      currentPart3QuestionIndex,
+      testMode,
+      finishTest,
+    ]
+  );
 
   // Determine correct list of recordings to send
   useEffect(() => {
@@ -418,16 +442,19 @@ function App() {
                 "{testContent.part1.questions[currentPart1Index]}"
               </p>
 
-              {isPreparingAudio && (
+              {isExaminerSpeaking && (
                 <div className="mb-6 flex items-center justify-center gap-2 text-gray-500 animate-pulse text-sm">
                   <div className="w-2 h-2 bg-gray-400 rounded-full"></div>
                   <div className="w-2 h-2 bg-gray-400 rounded-full animation-delay-200"></div>
                   <div className="w-2 h-2 bg-gray-400 rounded-full animation-delay-400"></div>
-                  Examiner is preparing to speak...
+                  Examiner is speaking...
                 </div>
               )}
 
-              <AudioRecorder onRecordingComplete={handlePart1Next} />
+              <AudioRecorder
+                onRecordingComplete={handlePart1Next}
+                disabled={isExaminerSpeaking}
+              />
             </div>
           )}
 
@@ -518,16 +545,19 @@ function App() {
                 "
               </p>
 
-              {isPreparingAudio && (
+              {isExaminerSpeaking && (
                 <div className="mb-6 flex items-center justify-center gap-2 text-gray-500 animate-pulse text-sm">
                   <div className="w-2 h-2 bg-gray-400 rounded-full"></div>
                   <div className="w-2 h-2 bg-gray-400 rounded-full animation-delay-200"></div>
                   <div className="w-2 h-2 bg-gray-400 rounded-full animation-delay-400"></div>
-                  Examiner is preparing to speak...
+                  Examiner is speaking...
                 </div>
               )}
 
-              <AudioRecorder onRecordingComplete={handlePart3Next} />
+              <AudioRecorder
+                onRecordingComplete={handlePart3Next}
+                disabled={isExaminerSpeaking}
+              />
             </div>
           )}
         </div>
