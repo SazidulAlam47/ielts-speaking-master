@@ -93,6 +93,14 @@ To determine the final score for each criterion (to be used for the Overall Band
     * Ends in .625 ➔ Rounds **DOWN** to .5 (e.g., 6.625 ➔ 6.5).
     * Ends in .875 ➔ Rounds **UP** to next whole band (e.g., 6.875 ➔ 7.0).
 
+**STEP 5: CALCULATE INDIVIDUAL PART BAND SCORES**
+- Part 1 Band Score = (Part 1 FC + Part 1 LR + Part 1 GRA + Part 1 P) / 4, then apply Official IELTS Rounding.
+- Part 2 Band Score = (Part 2 FC + Part 2 LR + Part 2 GRA + Part 2 P) / 4, then apply Official IELTS Rounding.
+- Part 3 Band Score = (Part 3 FC + Part 3 LR + Part 3 GRA + Part 3 P) / 4, then apply Official IELTS Rounding.
+
+**STEP 6: VERIFY OVERALL BAND SCORE**
+The Overall Band Score should equal the average of the three Part Band Scores (Part 1 Band + Part 2 Band + Part 3 Band) / 3, rounded according to Official IELTS Rounding rules.
+
 **Feedback Requirements:**
 - Provide specific feedback for each criterion, citing exact evidence from the candidate's responses to justify the scores.
 - Offer a general summary of the candidate's performance, highlighting strengths and areas for improvement.
