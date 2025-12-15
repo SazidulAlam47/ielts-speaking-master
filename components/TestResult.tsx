@@ -1,6 +1,6 @@
-import React from 'react';
-import { EvaluationResult } from '../types';
-import { CheckCircleIcon } from '@heroicons/react/24/solid';
+import React, { useState } from 'react';
+import { EvaluationResult, AudioRecording } from '../types';
+import { CheckCircleIcon, ArrowLeftIcon, PlayCircleIcon, ExclamationTriangleIcon } from '@heroicons/react/24/solid';
 import {
   ResponsiveContainer,
   RadialBarChart,
@@ -17,15 +17,19 @@ import {
 
 interface TestResultProps {
   result: EvaluationResult;
+  recordings?: AudioRecording[];
   onRestart: () => void;
   isFullTest?: boolean;
 }
 
 const TestResult: React.FC<TestResultProps> = ({
   result,
+  recordings = [],
   onRestart,
   isFullTest = false,
 }) => {
+  const [showReview, setShowReview] = useState(false);
+
   // Defensive check: if result is null/undefined
   if (!result) return <div>No results available.</div>;
 
@@ -66,6 +70,108 @@ const TestResult: React.FC<TestResultProps> = ({
 
   const hasPartBreakdown =
     result.partBreakdown && result.partBreakdown.length > 0;
+
+  // --- REVIEW PAGE RENDER ---
+  if (showReview) {
+    return (
+      <div className="max-w-6xl mx-auto p-4 md:p-6 bg-white shadow-xl rounded-2xl my-4 md:my-8 min-h-[80vh]">
+        <div className="flex items-center mb-6 border-b pb-4">
+          <button
+            onClick={() => setShowReview(false)}
+            className="flex items-center text-gray-600 hover:text-gray-900 font-medium transition"
+          >
+            <ArrowLeftIcon className="h-5 w-5 mr-2" />
+            Back to Results
+          </button>
+          <h2 className="text-2xl font-bold ml-auto text-gray-800">
+            Detailed Review
+          </h2>
+        </div>
+
+        <div className="space-y-12">
+          {result.partBreakdown?.map((partData, idx) => {
+             // Filter recordings for this part
+             const partRecordings = recordings.filter(r => 
+                partData.part.toLowerCase().includes(r.part.toLowerCase()) ||
+                r.part.toLowerCase().includes(partData.part.toLowerCase())
+             );
+
+             return (
+               <div key={idx} className="bg-gray-50 rounded-xl p-6 border border-gray-200">
+                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
+                    <h3 className="text-xl font-bold text-gray-900 bg-white px-4 py-2 rounded-lg shadow-sm">
+                      {partData.part} <span className="text-red-600 ml-2">Band {partData.band}</span>
+                    </h3>
+                 </div>
+
+                 {/* Questions List */}
+                 <div className="space-y-8">
+                   {partRecordings.map((rec, recIdx) => {
+                     // Get corresponding AI review. Assumes sequential mapping.
+                     const reviewData = partData.reviews?.[recIdx];
+                     
+                     return (
+                      <div key={recIdx} className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
+                         {/* Header: Question Context */}
+                         <div className="mb-4">
+                           <p className="text-xs text-gray-400 uppercase tracking-wider font-semibold mb-1">Question:</p>
+                           <p className="text-gray-800 font-medium">{rec.questionContext}</p>
+                         </div>
+
+                         {/* Audio Player */}
+                         <div className="mb-4 bg-gray-50 p-3 rounded-lg">
+                           <audio 
+                             controls 
+                             src={URL.createObjectURL(rec.blob)} 
+                             className="w-full h-8" 
+                           />
+                         </div>
+
+                         {/* Transcript */}
+                         <div className="mb-4">
+                            <p className="text-xs text-gray-400 uppercase tracking-wider font-semibold mb-1">Transcript:</p>
+                            <div className="text-gray-700 italic leading-relaxed border-l-2 border-gray-300 pl-3">
+                              "{reviewData?.transcript || "Transcript not available."}"
+                            </div>
+                         </div>
+
+                         {/* Mistakes */}
+                         {reviewData?.mistakes && reviewData.mistakes.length > 0 && (
+                           <div className="mt-4 pt-4 border-t border-gray-100">
+                              <p className="text-xs text-orange-500 uppercase tracking-wider font-semibold mb-2 flex items-center gap-1">
+                                <ExclamationTriangleIcon className="h-4 w-4" />
+                                Improvements
+                              </p>
+                              <div className="grid gap-3">
+                                {reviewData.mistakes.map((mistake, mIdx) => (
+                                  <div key={mIdx} className="text-sm bg-orange-50 p-3 rounded-md border border-orange-100">
+                                     <div className="flex gap-2 mb-1">
+                                        <span className="text-xs font-bold text-orange-700 bg-orange-200 px-1.5 py-0.5 rounded">{mistake.type}</span>
+                                     </div>
+                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mb-1">
+                                       <div className="text-red-600 line-through decoration-red-400">{mistake.original}</div>
+                                       <div className="text-green-600 font-medium">{mistake.correction}</div>
+                                     </div>
+                                     <div className="text-gray-500 text-xs mt-1">{mistake.explanation}</div>
+                                  </div>
+                                ))}
+                              </div>
+                           </div>
+                         )}
+                      </div>
+                     );
+                   })}
+                 </div>
+
+               </div>
+             );
+          })}
+        </div>
+      </div>
+    );
+  }
+
+  // --- RESULT DASHBOARD RENDER ---
 
   return (
     <div className="max-w-6xl mx-auto p-4 md:p-6 bg-white shadow-xl rounded-2xl my-4 md:my-8">
@@ -243,7 +349,16 @@ const TestResult: React.FC<TestResultProps> = ({
         />
       </div>
 
-      <div className="mt-8 md:mt-10 text-center">
+      <div className="mt-8 md:mt-10 flex flex-col md:flex-row justify-center gap-4">
+        {hasPartBreakdown && (
+            <button
+            onClick={() => setShowReview(true)}
+            className="px-6 md:px-8 py-3 bg-white text-gray-900 border-2 border-gray-900 font-semibold rounded-lg hover:bg-gray-50 transition shadow-sm text-sm md:text-base flex items-center justify-center gap-2"
+            >
+            <PlayCircleIcon className="h-5 w-5" />
+            Review Answers & Mistakes
+            </button>
+        )}
         <button
           onClick={onRestart}
           className="px-6 md:px-8 py-3 bg-gray-900 text-white font-semibold rounded-lg hover:bg-gray-800 transition shadow-lg text-sm md:text-base"

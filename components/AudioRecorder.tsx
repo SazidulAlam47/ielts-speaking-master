@@ -9,12 +9,12 @@ interface AudioRecorderProps {
   disabled?: boolean;
 }
 
-const AudioRecorder: React.FC<AudioRecorderProps> = ({
-  onRecordingComplete,
-  isAutoStart = false,
-  showTimer = true,
+const AudioRecorder: React.FC<AudioRecorderProps> = ({ 
+  onRecordingComplete, 
+  isAutoStart = false, 
+  showTimer = true, 
   stopSignal = false,
-  disabled = false,
+  disabled = false
 }) => {
   const [isRecording, setIsRecording] = useState(false);
   const [elapsedTime, setElapsedTime] = useState(0);
@@ -26,16 +26,16 @@ const AudioRecorder: React.FC<AudioRecorderProps> = ({
   // Use a ref for the callback to ensure the latest version is always called
   // without triggering effect cleanups that would stop the recording.
   const onRecordingCompleteRef = useRef(onRecordingComplete);
-
+  
   useEffect(() => {
     onRecordingCompleteRef.current = onRecordingComplete;
   }, [onRecordingComplete]);
 
   const cleanupMedia = useCallback(() => {
-    if (streamRef.current) {
-      streamRef.current.getTracks().forEach((track) => track.stop());
-      streamRef.current = null;
-    }
+      if (streamRef.current) {
+          streamRef.current.getTracks().forEach(track => track.stop());
+          streamRef.current = null;
+      }
   }, []);
 
   const startRecording = useCallback(async () => {
@@ -44,9 +44,7 @@ const AudioRecorder: React.FC<AudioRecorderProps> = ({
       streamRef.current = stream;
 
       const mediaRecorder = new MediaRecorder(stream, {
-        mimeType: MediaRecorder.isTypeSupported('audio/webm')
-          ? 'audio/webm'
-          : 'audio/mp4',
+          mimeType: MediaRecorder.isTypeSupported('audio/webm') ? 'audio/webm' : 'audio/mp4'
       });
 
       mediaRecorderRef.current = mediaRecorder;
@@ -67,13 +65,14 @@ const AudioRecorder: React.FC<AudioRecorderProps> = ({
 
       mediaRecorder.start();
       setIsRecording(true);
-
+      
       timerRef.current = window.setInterval(() => {
-        setElapsedTime((prev) => prev + 1);
+        setElapsedTime(prev => prev + 1);
       }, 1000);
+
     } catch (err) {
-      console.error('Error accessing microphone:', err);
-      alert('Could not access microphone. Please allow permissions.');
+      console.error("Error accessing microphone:", err);
+      alert("Could not access microphone. Please allow permissions.");
     }
   }, [cleanupMedia]); // Removed onRecordingComplete from dependencies
 
@@ -98,23 +97,20 @@ const AudioRecorder: React.FC<AudioRecorderProps> = ({
   // Effect for Cleanup (Unmount)
   useEffect(() => {
     return () => {
-      if (timerRef.current) {
-        clearInterval(timerRef.current);
-      }
-      if (
-        mediaRecorderRef.current &&
-        mediaRecorderRef.current.state !== 'inactive'
-      ) {
-        mediaRecorderRef.current.stop();
-      }
-      cleanupMedia();
+        if (timerRef.current) {
+            clearInterval(timerRef.current);
+        }
+        if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
+            mediaRecorderRef.current.stop();
+        }
+        cleanupMedia();
     };
   }, [cleanupMedia]);
 
   // Watch for stop signal
   useEffect(() => {
     if (stopSignal && isRecording) {
-      stopRecording();
+        stopRecording();
     }
   }, [stopSignal, isRecording, stopRecording]);
 
@@ -126,23 +122,11 @@ const AudioRecorder: React.FC<AudioRecorderProps> = ({
 
   return (
     <div className="flex flex-col items-center justify-center space-y-4">
-      <div
-        className={`w-24 h-24 rounded-full flex items-center justify-center transition-all duration-300 ${
-          isRecording
-            ? 'bg-red-100 animate-pulse'
-            : disabled
-            ? 'bg-gray-200'
-            : 'bg-gray-100'
-        }`}
-      >
+      <div className={`w-24 h-24 rounded-full flex items-center justify-center transition-all duration-300 ${isRecording ? 'bg-red-100 animate-pulse' : disabled ? 'bg-gray-200' : 'bg-gray-100'}`}>
         {isRecording ? (
           <MicrophoneIcon className="h-10 w-10 text-red-600" />
         ) : (
-          <MicrophoneIcon
-            className={`h-10 w-10 ${
-              disabled ? 'text-gray-400' : 'text-gray-500'
-            }`}
-          />
+          <MicrophoneIcon className={`h-10 w-10 ${disabled ? 'text-gray-400' : 'text-gray-500'}`} />
         )}
       </div>
 
@@ -157,13 +141,13 @@ const AudioRecorder: React.FC<AudioRecorderProps> = ({
           onClick={startRecording}
           disabled={disabled}
           className={`px-6 py-2 rounded-full font-medium transition-colors flex items-center gap-2 ${
-            disabled
-              ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+            disabled 
+              ? 'bg-gray-300 text-gray-500 cursor-not-allowed' 
               : 'bg-red-600 text-white hover:bg-red-700'
           }`}
         >
           <MicrophoneIcon className="h-5 w-5" />
-          {disabled ? 'Examiner is speaking...' : 'Start Recording'}
+          {disabled ? "Examiner is speaking..." : "Start Recording"}
         </button>
       ) : (
         <button

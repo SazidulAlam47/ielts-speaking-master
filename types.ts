@@ -38,6 +38,19 @@ export interface TestContent {
   part3: QuestionPart3[];
 }
 
+export interface Mistake {
+  original: string;
+  correction: string;
+  explanation: string;
+  type: 'Grammar' | 'Vocabulary' | 'Pronunciation' | 'Coherence';
+}
+
+export interface ResponseReview {
+  question: string;
+  transcript: string;
+  mistakes: Mistake[];
+}
+
 export interface PartBreakdown {
   part: string;
   scores: {
@@ -48,6 +61,7 @@ export interface PartBreakdown {
   };
   band: number;
   feedback: string;
+  reviews: ResponseReview[]; // Granular reviews per answer
 }
 
 export interface EvaluationResult {

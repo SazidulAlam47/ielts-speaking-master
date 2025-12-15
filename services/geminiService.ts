@@ -1,5 +1,5 @@
 import { GoogleGenAI, Type } from '@google/genai';
-import { RUBRIC_SYSTEM_PROMPT } from '../constants';
+import { RUBRIC_SYSTEM_PROMPT } from '../constants/prompt';
 import { EvaluationResult, AudioRecording } from '../types';
 
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
@@ -98,18 +98,10 @@ export const evaluateTest = async (
                   scores: {
                     type: Type.OBJECT,
                     properties: {
-                      fluencyCoherence: {
-                        type: Type.NUMBER,
-                      },
-                      lexicalResource: {
-                        type: Type.NUMBER,
-                      },
-                      grammaticalRange: {
-                        type: Type.NUMBER,
-                      },
-                      pronunciation: {
-                        type: Type.NUMBER,
-                      },
+                      fluencyCoherence: { type: Type.NUMBER },
+                      lexicalResource: { type: Type.NUMBER },
+                      grammaticalRange: { type: Type.NUMBER },
+                      pronunciation: { type: Type.NUMBER },
                     },
                     required: [
                       'fluencyCoherence',
@@ -120,8 +112,37 @@ export const evaluateTest = async (
                   },
                   band: { type: Type.NUMBER },
                   feedback: { type: Type.STRING },
+                  reviews: {
+                    type: Type.ARRAY,
+                    items: {
+                      type: Type.OBJECT,
+                      properties: {
+                        question: { type: Type.STRING },
+                        transcript: { type: Type.STRING },
+                        mistakes: {
+                          type: Type.ARRAY,
+                          items: {
+                            type: Type.OBJECT,
+                            properties: {
+                              original: { type: Type.STRING },
+                              correction: { type: Type.STRING },
+                              explanation: { type: Type.STRING },
+                              type: { type: Type.STRING },
+                            },
+                            required: [
+                              'original',
+                              'correction',
+                              'explanation',
+                              'type',
+                            ],
+                          },
+                        },
+                      },
+                      required: ['question', 'transcript', 'mistakes'],
+                    },
+                  },
                 },
-                required: ['part', 'scores', 'band', 'feedback'],
+                required: ['part', 'scores', 'band', 'feedback', 'reviews'],
               },
             },
           },

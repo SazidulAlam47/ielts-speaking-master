@@ -6,7 +6,7 @@ import {
   EvaluationResult,
   TestContent,
 } from './types';
-import { TESTS } from './constants';
+import { TESTS } from './constants/ielts';
 import AudioRecorder from './components/AudioRecorder';
 import TestResult from './components/TestResult';
 import { evaluateTest } from './services/geminiService';
@@ -387,6 +387,7 @@ function App() {
     return (
       <TestResult
         result={evaluation}
+        recordings={recordings}
         onRestart={() => setPhase(TestPhase.WELCOME)}
         isFullTest={testMode === TestMode.FULL}
       />
