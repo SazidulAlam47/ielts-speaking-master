@@ -17,14 +17,22 @@ const AudioRecorder: React.FC<AudioRecorderProps> = ({
   const [isRecording, setIsRecording] = useState(false);
   const [elapsedTime, setElapsedTime] = useState(0);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const streamRef = useRef<MediaStream | null>(null);
   const chunksRef = useRef<Blob[]>([]);
   const timerRef = useRef<number | null>(null);
 
+  const cleanupMedia = useCallback(() => {
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach((track) => track.stop());
+      streamRef.current = null;
+    }
+  }, []);
+
   const startRecording = useCallback(async () => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        audio: true,
-      });
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      streamRef.current = stream;
+
       const mediaRecorder = new MediaRecorder(stream, {
         mimeType: MediaRecorder.isTypeSupported('audio/webm')
           ? 'audio/webm'
@@ -41,11 +49,9 @@ const AudioRecorder: React.FC<AudioRecorderProps> = ({
       };
 
       mediaRecorder.onstop = () => {
-        const blob = new Blob(chunksRef.current, {
-          type: 'audio/webm',
-        });
+        const blob = new Blob(chunksRef.current, { type: 'audio/webm' });
         onRecordingComplete(blob);
-        stream.getTracks().forEach((track) => track.stop());
+        cleanupMedia();
       };
 
       mediaRecorder.start();
@@ -58,7 +64,7 @@ const AudioRecorder: React.FC<AudioRecorderProps> = ({
       console.error('Error accessing microphone:', err);
       alert('Could not access microphone. Please allow permissions.');
     }
-  }, [onRecordingComplete]);
+  }, [onRecordingComplete, cleanupMedia]);
 
   const stopRecording = useCallback(() => {
     if (mediaRecorderRef.current && isRecording) {
@@ -66,6 +72,7 @@ const AudioRecorder: React.FC<AudioRecorderProps> = ({
       setIsRecording(false);
       if (timerRef.current) {
         clearInterval(timerRef.current);
+        timerRef.current = null;
       }
     }
   }, [isRecording]);
@@ -74,10 +81,20 @@ const AudioRecorder: React.FC<AudioRecorderProps> = ({
     if (isAutoStart) {
       startRecording();
     }
+    // Cleanup on unmount or when dependencies change
     return () => {
-      if (timerRef.current) clearInterval(timerRef.current);
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+      }
+      if (
+        mediaRecorderRef.current &&
+        mediaRecorderRef.current.state !== 'inactive'
+      ) {
+        mediaRecorderRef.current.stop();
+      }
+      cleanupMedia();
     };
-  }, [isAutoStart, startRecording]);
+  }, [isAutoStart, startRecording, cleanupMedia]);
 
   // Watch for stop signal
   useEffect(() => {

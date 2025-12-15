@@ -118,6 +118,16 @@ function App() {
     if (textToSpeak) {
       speak(textToSpeak); // Default behavior: wait 5s
     }
+
+    // Cleanup: Stop speaking if phase/question changes or component unmounts
+    return () => {
+      if (audioTimeoutRef.current) {
+        clearTimeout(audioTimeoutRef.current);
+        audioTimeoutRef.current = null;
+      }
+      window.speechSynthesis.cancel();
+      setIsPreparingAudio(false);
+    };
   }, [
     phase,
     currentPart1Index,
