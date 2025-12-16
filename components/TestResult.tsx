@@ -222,36 +222,17 @@ interface DetailedReviewProps {
   result: EvaluationResult;
   recordings: AudioRecording[];
   isPrinting?: boolean;
-  onBack?: () => void;
-  onDownloadPDF?: () => void;
 }
 
-const DetailedReview: React.FC<DetailedReviewProps> = ({ result, recordings, isPrinting = false, onBack, onDownloadPDF }) => {
+const DetailedReview: React.FC<DetailedReviewProps> = ({ result, recordings, isPrinting = false }) => {
   return (
     <div className={`max-w-6xl mx-auto ${isPrinting ? 'p-0 mt-8' : 'p-4 md:p-6 bg-white shadow-xl rounded-2xl my-4 md:my-8 min-h-[80vh]'}`}>
       <div className="flex items-center mb-6 border-b pb-4">
-        {!isPrinting && onBack && (
-          <button onClick={onBack} className="flex items-center text-gray-600 hover:text-gray-900 font-medium transition">
-            <ArrowLeftIcon className="h-5 w-5 mr-2" />
-            Back to Results
-          </button>
-        )}
         
-        <h2 className={`text-2xl font-bold text-gray-800 ${!isPrinting ? 'ml-auto' : ''}`}>
+        <h2 className={`text-2xl font-bold text-gray-800 ${!isPrinting ? 'ml-auto mr-auto' : ''}`}>
           Detailed Review
         </h2>
 
-        {!isPrinting && onDownloadPDF && (
-          <div className="ml-4">
-            <button
-               onClick={onDownloadPDF}
-               className="flex items-center px-3 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 text-xs md:text-sm font-semibold transition"
-            >
-               <DocumentArrowDownIcon className="h-4 w-4 mr-1" />
-               Download PDF Report
-            </button>
-          </div>
-        )}
       </div>
 
       <div className="space-y-12">
@@ -335,7 +316,7 @@ const TestResult: React.FC<TestResultProps> = ({
   onRestart,
   isFullTest = false,
 }) => {
-  const [showReview, setShowReview] = useState(false);
+
   const [isDownloadingAudio, setIsDownloadingAudio] = useState(false);
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
   
@@ -490,15 +471,7 @@ const TestResult: React.FC<TestResultProps> = ({
   return (
     <>
       {/* --- VISIBLE UI --- */}
-      {showReview ? (
-        <DetailedReview 
-           result={result} 
-           recordings={recordings} 
-           onBack={() => setShowReview(false)}
-           onDownloadPDF={handleDownloadPDF}
-        />
-      ) : (
-        <DashboardView result={result} isFullTest={isFullTest}>
+      <DashboardView result={result} isFullTest={isFullTest}>
           <button
              onClick={handleDownloadFullAudio}
              disabled={isDownloadingAudio}
@@ -517,15 +490,7 @@ const TestResult: React.FC<TestResultProps> = ({
              {isGeneratingPDF ? 'Generating...' : 'Download PDF Report'}
           </button>
           
-          {result.partBreakdown && result.partBreakdown.length > 0 && (
-            <button
-            onClick={() => setShowReview(true)}
-            className="px-5 md:px-6 py-2 bg-white text-gray-900 border-2 border-gray-900 font-semibold rounded-lg hover:bg-gray-50 transition shadow-sm text-sm flex items-center justify-center gap-2"
-            >
-            <PlayCircleIcon className="h-5 w-5" />
-            Review Answers
-            </button>
-           )}
+
            
           <button
             onClick={onRestart}
@@ -534,7 +499,10 @@ const TestResult: React.FC<TestResultProps> = ({
             Take Another Test
           </button>
         </DashboardView>
-      )}
+
+      <div className="border-t-4 border-gray-100 my-8"></div>
+      
+      <DetailedReview result={result} recordings={recordings} />
 
       {/* --- HIDDEN PRINT VIEW --- */}
       <div className="fixed left-[-3000px] top-0 w-[1000px]">
