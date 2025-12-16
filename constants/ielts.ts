@@ -1,3 +1,5 @@
+// don't touch this file ever. it will always contain the same content for consistency across the app
+
 import { TestContent } from '@/types';
 
 export const IELTS_SPEAKING_BAND_DESCRIPTORS = `
