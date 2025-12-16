@@ -14,6 +14,9 @@ import {
   SpeakerWaveIcon,
   PlayCircleIcon,
   ClockIcon,
+  ExclamationTriangleIcon,
+  ArrowPathIcon,
+  HomeIcon,
 } from '@heroicons/react/24/outline';
 
 function App() {
@@ -28,6 +31,7 @@ function App() {
   const [currentPart3QuestionIndex, setCurrentPart3QuestionIndex] = useState(0); // Which question in sub-topic
   const [recordings, setRecordings] = useState<AudioRecording[]>([]);
   const [evaluation, setEvaluation] = useState<EvaluationResult | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [timer, setTimer] = useState(0); // Used for prep time in Part 2 and answering time
   const [isExaminerSpeaking, setIsExaminerSpeaking] = useState(false);
 
@@ -320,8 +324,8 @@ function App() {
         })
         .catch((err) => {
           console.error("Full Evaluation Error:", err);
-          alert(err?.message || 'Error during AI evaluation');
-          setPhase(TestPhase.WELCOME);
+          setErrorMessage(err?.message || 'Error during AI evaluation');
+          setPhase(TestPhase.ERROR);
         });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -403,6 +407,44 @@ function App() {
             Analyzing your responses...
           </h2>
           <p className="text-gray-500">Comparing with band descriptors</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (phase === TestPhase.ERROR) {
+    return (
+      <div className="min-h-[100dvh] flex items-center justify-center bg-gray-50 p-4">
+        <div className="bg-white p-8 rounded-2xl shadow-xl max-w-lg w-full text-center border-t-4 border-red-500">
+           <ExclamationTriangleIcon className="h-16 w-16 text-red-500 mx-auto mb-4" />
+           <h2 className="text-2xl font-bold text-gray-900 mb-2">Evaluation Failed</h2>
+           <p className="text-gray-600 mb-6">
+             {errorMessage || "An unexpected error occurred while communicating with the AI service."}
+           </p>
+           
+           <div className="flex flex-col gap-3">
+             <button
+               onClick={() => {
+                 setErrorMessage(null);
+                 setPhase(TestPhase.EVALUATING);
+               }}
+               className="w-full py-3 px-4 bg-red-600 text-white rounded-lg hover:bg-red-700 transition font-bold shadow flex items-center justify-center gap-2"
+             >
+               <ArrowPathIcon className="h-5 w-5" />
+               Try Again
+             </button>
+             
+             <button
+               onClick={() => setPhase(TestPhase.WELCOME)}
+               className="w-full py-3 px-4 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition font-semibold flex items-center justify-center gap-2"
+             >
+               <HomeIcon className="h-5 w-5" />
+               Return to Home
+             </button>
+           </div>
+           <p className="text-xs text-gray-400 mt-4">
+             Note: Retrying will send your existing recordings again.
+           </p>
         </div>
       </div>
     );

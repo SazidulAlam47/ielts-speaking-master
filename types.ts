@@ -14,6 +14,7 @@ export enum TestPhase {
   PART_3 = 'PART_3',
   EVALUATING = 'EVALUATING',
   RESULTS = 'RESULTS',
+  ERROR = 'ERROR',
 }
 
 export interface QuestionPart1 {
