@@ -159,13 +159,20 @@ export const evaluateTest = async (
       },
     });
 
+
+
     if (response.text) {
       return JSON.parse(response.text) as EvaluationResult;
     } else {
       throw new Error('No response text from Gemini');
     }
   } catch (error) {
-    console.error('Evaluation Error:', error);
+    console.error('Evaluation Error Details:', error);
+    if (!process.env.API_KEY) {
+      console.error("API_KEY is missing in process.env!");
+    } else {
+      console.log("API_KEY is present (starts with):", process.env.API_KEY.substring(0, 5) + "...");
+    }
     throw error;
   }
 };

@@ -319,8 +319,8 @@ function App() {
           setPhase(TestPhase.RESULTS);
         })
         .catch((err) => {
-          console.error(err);
-          alert('Error during AI evaluation.');
+          console.error("Full Evaluation Error:", err);
+          alert(err?.message || 'Error during AI evaluation');
           setPhase(TestPhase.WELCOME);
         });
     }

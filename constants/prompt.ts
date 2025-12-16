@@ -49,15 +49,11 @@ To determine the final score for each criterion (to be used for the Overall Band
 **STEP 6: VERIFY OVERALL BAND SCORE**
 The Overall Band Score should equal the average of the three Part Band Scores (Part 1 Band + Part 2 Band + Part 3 Band) / 3, rounded according to Official IELTS Rounding rules.
 
-**Feedback Requirements:**
-- Provide specific feedback for each criterion, citing exact evidence from the candidate's responses to justify the scores.
-- Offer a general summary of the candidate's performance, highlighting strengths and areas for improvement.
-- **Tips for Improvement**: Provide specific, actionable advice to help the candidate achieve a higher band score. Focus on correcting the most significant errors or weaknesses identified.
-- **IMPORTANT**: You MUST provide a separate evaluation for each part processed (e.g., Part 1, Part 2, Part 3) in the 'partBreakdown' field, in addition to the overall aggregated scores.
-- **TRANSCRIPT & MISTAKES**: For EACH audio recording provided in the input, you MUST create a corresponding review item in the 'reviews' array. This item must include:
-    1. The question (from context).
-    2. The verbatim transcript of the user's answer.
-    3. Specific mistakes (Grammar, Vocabulary, Pronunciation, Coherence) found in that answer.
+- **Feedback Requirements (STRICT TOKEN LIMITS)**:
+- **Criteria Feedback**: For FC, LR, GRA, and P, provide **VERY CONCISE** feedback (max 1-2 sentences). Do NOT provide specific examples inside these fields.
+- **Part Feedback**: Provide a single-line summary for the part breakdown feedback.
+- **General Feedback**: Keep this comprehensive as usual.
+- **Mistakes**: Continue to list specific mistakes as requested, but ensure explanations are brief.
 
 **Additional Evaluation Criteria & Feedback Instructions:**
 - **Topic Relevance (All Parts)**: If the candidate speaks completely out of topic or context, it must negatively affect their band score.
@@ -81,11 +77,11 @@ ${IELTS_SPEAKING_BAND_DESCRIPTORS}
 **Output Format:**
 Return ONLY a valid JSON object with this structure:
 {
-  "overallBand": number,
-  "fluencyCoherence": { "score": number, "feedback": "string (specific evidence)" },
-  "lexicalResource": { "score": number, "feedback": "string (specific evidence)" },
-  "grammaticalRange": { "score": number, "feedback": "string (specific evidence)" },
-  "pronunciation": { "score": number, "feedback": "string (specific evidence)" },
+   "overallBand": number,
+  "fluencyCoherence": { "score": number, "feedback": "string (MAX 2 sentences, NO examples)" },
+  "lexicalResource": { "score": number, "feedback": "string (MAX 2 sentences, NO examples)" },
+  "grammaticalRange": { "score": number, "feedback": "string (MAX 2 sentences, NO examples)" },
+  "pronunciation": { "score": number, "feedback": "string (MAX 2 sentences, NO examples)" },
   "generalFeedback": "string (summary)",
   "partBreakdown": [
     {
@@ -97,7 +93,7 @@ Return ONLY a valid JSON object with this structure:
          "pronunciation": number
       },
       "band": number,
-      "feedback": "string (brief feedback for this part)",
+      "feedback": "string (MAX 1 line summary for this part)",
       "reviews": [
          {
             "question": "string",
