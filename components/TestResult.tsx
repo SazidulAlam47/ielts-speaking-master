@@ -225,8 +225,36 @@ interface DetailedReviewProps {
 }
 
 const DetailedReview: React.FC<DetailedReviewProps> = ({ result, recordings, isPrinting = false }) => {
+  // Mobile: No padding (handled by parent) or minimal. Desktop: p-6.
+  // We remove 'p-4' from the mobile class list here because DashboardView (parent context) already might have padding, 
+  // or we want it flush on mobile.
+  // Actually, TestResult -> DashboardView is a sibling to DetailedReview. TestResult DOES NOT wrap DetailedReview in a pervasive p-4 container ANYMORE?
+  // Let's check TestResult:
+  // <DashboardView ...> -> has internal padding.
+  // <DetailedReview ...> -> is rendered AFTER DashboardView.
+  // BUT TestResult return fragment <></>.
+  // So DetailedReview is a top level child of the App's container?
+  // App.tsx: Result view is returned directly: <TestResult ... />
+  // App.tsx wrapper: <div className="min-h-[100dvh] bg-gray-50 p-4 md:p-8"> ... <TestResult ... /> ... </div> ???
+  // Wait, App.tsx: if (phase === RESULTS) return <TestResult ... /> -> so it replaces the whole App UI.
+  
+  // So TestResult is the ROOT for that view.
+  // DetailedReview has `max-w-6xl mx-auto ... p-4 md:p-6`. This looks fine usually.
+  // "too much padding in left and write". 
+  // Maybe the user means inside the cards?
+  // The cards have `p-6` (part header) and `p-4` (review item).
+  
+  // Let's look at the DetailedReview container again.
+  // className={`max-w-6xl mx-auto ${isPrinting ? 'p-0 mt-8' : 'p-4 md:p-6 bg-white shadow-xl rounded-2xl my-4 md:my-8 min-h-[80vh]'}`}
+  
+  // On mobile: `p-4`. Plus `App` might have padding?
+  // No, App.tsx replaces the phase content completely.
+  
+  // Let's try reducing the main container padding on mobile to `p-2` or `p-0` if the children have padding.
+  // And the inner cards.
+  
   return (
-    <div className={`max-w-6xl mx-auto ${isPrinting ? 'p-0 mt-8' : 'p-4 md:p-6 bg-white shadow-xl rounded-2xl my-4 md:my-8 min-h-[80vh]'}`}>
+    <div className={`max-w-6xl mx-auto ${isPrinting ? 'p-0 mt-8' : 'py-2 px-1 md:p-6 bg-white shadow-xl rounded-none md:rounded-2xl my-0 md:my-8 min-h-[80vh]'}`}>
       <div className="flex items-center mb-6 border-b pb-4">
         
         <h2 className={`text-2xl font-bold text-gray-800 ${!isPrinting ? 'ml-auto mr-auto' : ''}`}>
@@ -244,8 +272,8 @@ const DetailedReview: React.FC<DetailedReviewProps> = ({ result, recordings, isP
            if (partRecordings.length === 0) return null;
 
            return (
-             <div key={idx} className="bg-gray-50 rounded-xl p-6 border border-gray-200">
-               <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
+             <div key={idx} className="bg-gray-50 rounded-xl py-3 px-1 md:p-6 border border-gray-200">
+               <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 md:mb-6">
                   <h3 className="text-xl font-bold text-gray-900 bg-white px-4 py-2 rounded-lg shadow-sm">
                     {partData.part} <span className="text-red-600 ml-2">Band {partData.band}</span>
                   </h3>

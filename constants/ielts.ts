@@ -3,55 +3,51 @@
 import { TestContent } from '@/types';
 
 export const IELTS_SPEAKING_BAND_DESCRIPTORS = `
-**IELTS Speaking Band Descriptors:**
+**IELTS Speaking Band Descriptors (Concise Reference):**
 
 **1. Fluency and Coherence (FC)**
-- **Band 9**: Speaks fluently with only rare repetition or self-correction. Any hesitation is content-related rather than to find words or grammar. Speaks coherently with fully appropriate cohesive features. Topic development is fully coherent and appropriately extended.
-- **Band 8**: Speaks fluently with only occasional repetition or self-correction; hesitation is usually content-related and only rarely to search for language. Develops topics coherently and appropriately.
-- **Band 7**: Speaks at length without noticeable effort or loss of coherence. May demonstrate language-related hesitation at times, or some repetition and/or self-correction. Uses a range of connectives and discourse markers with some flexibility.
-- **Band 6**: Is willing to speak at length, though may lose coherence at times due to occasional repetition, self-correction or hesitation. Uses a range of connectives and discourse markers but not always appropriately.
-- **Band 5**: Usually maintains flow of speech but uses repetition, self-correction and/or slow speech to keep going. May over-use certain connectives and discourse markers. Produces simple speech fluently, but more complex communication causes fluency problems.
-- **Band 4**: Cannot respond without noticeable pauses and may speak slowly, with frequent repetition and self-correction. Links basic sentences but with repetitious use of simple connectives and some breakdowns in coherence.
-- **Band 3**: Speaks with long pauses. Has limited ability to link simple sentences. Gives only simple responses and is frequently unable to convey basic message.
-- **Band 2**: Pauses for lengthy periods before most words. Little communication possible.
-- **Band 1**: No communication possible or speech is totally incoherent.
-- **Band 0**: Does not attend.
+- **Band 9**: Fluent, effortless, rare hesitation/repetition, fully coherent.
+- **Band 8**: Fluent, occasional repetition/hesitation (content-related), coherent topic development.
+- **Band 7**: Sustained speech, some hesitation/repetition, flexible connectives.
+- **Band 6**: Willing to speak at length, occasional loss of coherence/repetition, connects ideas clearly.
+- **Band 5**: Maintains flow but with repetition/slow speech, simple fluency, complex struggles.
+- **Band 4**: Noticeable pauses/slow speech, frequent repetition, basic linking only.
+- **Band 3**: Long pauses, limited linking, simple responses only.
+- **Band 2**: Long pauses before most words, little communication.
+- **Band 1**: Totally incoherent or no communication.
 
 **2. Lexical Resource (LR)**
-- **Band 9**: Uses vocabulary with full flexibility and precision in all topics. Uses idiomatic language naturally and accurately.
-- **Band 8**: Uses a wide vocabulary resource readily and flexibly to convey precise meaning. Uses less common and idiomatic vocabulary skilfully, with occasional inaccuracies. Uses paraphrase effectively as required.
-- **Band 7**: Uses vocabulary resource flexibly to discuss a variety of topics. Uses some less common and idiomatic vocabulary and shows some awareness of style and collocation, with some inappropriate choices. Uses paraphrase effectively.
-- **Band 6**: Has a wide enough vocabulary to discuss topics at length and make meaning clear in spite of inappropriacies. Generally uses paraphrase successfully.
-- **Band 5**: Manages to talk about familiar and unfamiliar topics but uses vocabulary with limited flexibility. Attempts to use paraphrase but with mixed success.
-- **Band 4**: Uses basic vocabulary for familiar topics but has limited vocabulary for unfamiliar topics. Frequent errors in word choice. Rarely attempts paraphrase.
-- **Band 3**: Uses simple vocabulary to convey personal information. Has insufficient vocabulary for less familiar topics.
-- **Band 2**: Only produces isolated words or memorised utterances.
-- **Band 1**: No resource except a few isolated words.
-- **Band 0**: Does not attend.
+- **Band 9**: Full flexibility/precision, natural idiomatic usage.
+- **Band 8**: Wide resource, flexible/precise, skillful idiomatic use with rare slips.
+- **Band 7**: Flexible for various topics, some idiomatic awareness, effective paraphrase.
+- **Band 6**: Wide enough for length/meaning, adequate paraphrase.
+- **Band 5**: Limits flexibility, successful with familiar topics, mixed paraphrase success.
+- **Band 4**: Basic vocabulary for familiar topics, frequent errors, rare paraphrase.
+- **Band 3**: Simple vocabulary for personal info, insufficient for other topics.
+- **Band 2**: Isolated words/memorized phases.
+- **Band 1**: Few isolated words.
 
 **3. Grammatical Range and Accuracy (GRA)**
-- **Band 9**: Uses a full range of structures naturally and appropriately. Produces consistently accurate structures apart from 'slips' characteristic of native speaker speech.
-- **Band 8**: Uses a wide range of structures flexibly. Produces a majority of error-free sentences with only very occasional inappropriacies or basic/non-systematic errors.
-- **Band 7**: Uses a range of complex structures with some flexibility. Frequently produces error-free sentences, though some grammatical mistakes persist.
-- **Band 6**: Uses a mix of simple and complex structures, but with limited flexibility. May make frequent mistakes with complex structures though these rarely cause comprehension problems.
-- **Band 5**: Produces basic sentence forms with reasonable accuracy. Uses a limited range of more complex structures, but these usually contain errors and may cause some comprehension problems.
-- **Band 4**: Produces basic sentence forms and some correct simple sentences but subordinate structures are rare. Errors are frequent and may lead to misunderstanding.
-- **Band 3**: Attempts basic sentence forms but with very limited success, or relies on apparently memorised utterances. Makes numerous errors except in memorised expressions.
+- **Band 9**: Full range, natural/appropriate, consistent accuracy (native-like slips).
+- **Band 8**: Wide range, flexible, majority error-free, rare basic errors.
+- **Band 7**: Range of complex structures, flexible, frequent error-free sentences.
+- **Band 6**: Mix of simple/complex, frequent errors in complex structures but clear meaning.
+- **Band 5**: Basic accuracy, limited complex range with frequent errors/comprehension issues.
+- **Band 4**: Basic forms correct, subordinate structures rare, frequent errors causing misunderstanding.
+- **Band 3**: Attempts basic forms with limited success, memorized utterances.
 - **Band 2**: Cannot produce basic sentence forms.
 - **Band 1**: No rateable language.
-- **Band 0**: Does not attend.
 
 **4. Pronunciation (P)**
-- **Band 9**: Uses a full range of phonological features to convey precise and subtle meaning. Sustains flexible use of features throughout. Is effortless to understand.
-- **Band 8**: Uses a wide range of phonological features. Sustains flexible use of features, with only occasional lapses. Is easy to understand throughout; L1 accent has minimal effect on intelligibility.
-- **Band 7**: Shows all the positive features of Band 6 and some, but not all, of the positive features of Band 8.
-- **Band 6**: Uses a range of phonological features with mixed control. Shows some effective use of features but this is not sustained. Can generally be understood throughout, though mispronunciation of individual words or sounds may reduce clarity at times.
-- **Band 5**: Shows all the positive features of Band 4 and some, but not all, of the positive features of Band 6.
-- **Band 4**: Uses a limited range of phonological features. Attempts to control features but lapses are frequent. Mispronunciations are frequent and cause some difficulty for the listener.
-- **Band 3**: Shows some of the features of Band 2 and some, but not all, of the positive features of Band 4.
-- **Band 2**: Speech is often unintelligible.
-- **Band 1**: Speech is unintelligible.
-- **Band 0**: Does not attend.
+- **Band 9**: Full range of features, precise/subtle meaning, effortless to understand.
+- **Band 8**: Wide range of features, flexible, occasional lapses, easy to understand.
+- **Band 7**: Positive features of Band 6 + some of Band 8, generally sustained control.
+- **Band 6**: range of features with mixed control, generally understood despite mispronunciations.
+- **Band 5**: Features of Band 4 + some of Band 6, generally understood.
+- **Band 4**: Limited features, frequent lapses/mispronunciations causing listener exertion.
+- **Band 3**: Features of Band 2 + some of Band 4.
+- **Band 2**: Often unintelligible.
+- **Band 1**: Unintelligible.
 `;
 
 export const TESTS: TestContent[] = [

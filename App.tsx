@@ -413,6 +413,8 @@ function App() {
   }
 
   if (phase === TestPhase.ERROR) {
+    console.log(errorMessage);
+    console.log(errorMessage?.error);
     return (
       <div className="min-h-[100dvh] flex items-center justify-center bg-gray-50 p-4">
         <div className="bg-white p-8 rounded-2xl shadow-xl max-w-lg w-full text-center border-t-4 border-red-500">
@@ -421,7 +423,7 @@ function App() {
             Evaluation Failed
           </h2>
           <p className="text-gray-600 mb-6">
-            {errorMessage?.message ||
+            {errorMessage ||
               'An unexpected error occurred while communicating with the AI service.'}
           </p>
 
