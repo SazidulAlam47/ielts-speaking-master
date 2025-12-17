@@ -382,6 +382,17 @@ function App() {
             </a>
             .
           </div>
+          
+          <div className="mt-4 p-3 bg-yellow-50 rounded-lg border border-yellow-100 text-xs text-yellow-800">
+            <p className="font-semibold mb-1">Having trouble with evaluation?</p>
+            Try the hosted version on <a 
+              href="https://aistudio.google.com/apps/drive/1FjwvucdcHOCdr1_ysmXyfGGeVK1oiXgq?showPreview=true&showAssistant=true&fullscreenApplet=true" 
+              target="_blank" 
+              className="underline text-yellow-900 hover:text-black"
+            >
+              Google AI Studio
+            </a>.
+          </div>
         </div>
       </div>
     );
